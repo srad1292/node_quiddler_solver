@@ -1,0 +1,15 @@
+{
+  "name": "quiddler_solver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "keep_or_delete.js",
+  "scripts": {
+    "test": "jest ./tests"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "jest": "^28.1.3",
+    "prompt-sync": "^4.2.0"
+  }
+}
