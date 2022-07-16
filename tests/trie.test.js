@@ -6,9 +6,9 @@ test('constructor creates root - pt 0 - instance of TrieNode', () => {
     expect(trie.root).toBeInstanceOf(TrieNode);
 });
 
-test('constructor creates root - pt 1 - value', () => {
+test('constructor creates root - pt 1 - letters', () => {
     const trie = new Trie();
-    expect(trie.root.value).toBe('');
+    expect(trie.root.letters).toBe('');
 });
 
 test('constructor creates root - pt 1 - isWord', () => {
@@ -21,6 +21,31 @@ test('addWord adds given word', () => {
     trie.addWord('dog');
     expect(trie.hasWord('dog')).toBe(true);
 });
+
+test('addWord gives correct score for: dog', () => {
+    const trie = new Trie();
+    trie.addWord('dog');
+    const words = trie.getWordsWithPoints();
+    const points = words.find(word => word.word === 'dog').points;
+    expect(points).toBe(13);
+});
+
+test('addWord gives correct score for: c-l-ose', () => {
+    const trie = new Trie();
+    trie.addWord('close');
+    const words = trie.getWordsWithPoints();
+    const points = words.find(word => word.word === 'close').points;
+    expect(points).toBe(18);
+});
+
+// test('addWord gives correct score for: cl-ose', () => {
+//     const trie = new Trie();
+//     trie.addWord('close');
+//     const words = trie.getWordsWithPoints();
+//     const points = words.find(word => word.word === 'close').points;
+//     // will be 17 once implemented
+//     expect(points).toBe(18);
+// });
 
 test('addWord does not mark leading letters as words', () => {
     const trie = new Trie();
