@@ -5,21 +5,43 @@ function Trie() {
     this.root = new TrieNode('', 0, false);
     this.deck = getDeck();
     this.addWord = function(word) {
-        let letters = word.split('');
-        let nodeRef = this.root;
-        let index = 0;
-        while(index < letters.length) {
-            let letter = letters[index];
-            if(nodeRef.hasChild(letter)) { 
-                nodeRef = nodeRef.children[letter]; 
-                if(index === letters.length-1 && nodeRef.isWord === false) { nodeRef.isWord = true; }
+        function addWordPermutations(outerRef, remainingWord, nodeRef) {
+            if(remainingWord === '') { return; }
+            // console.log("Perm on word: ", remainingWord);
+            let letters = remainingWord.split('');
+            function addChild(lettersToAdd) {
+                // console.log("Node ref I am adding to: ", nodeRef.letters);
+                // console.log("letters i am adding: ", lettersToAdd);
+                if(nodeRef.hasChild(lettersToAdd)) { 
+                    nodeRef = nodeRef.children[lettersToAdd]; 
+                    if(index === letters.length-lettersToAdd.length && nodeRef.isWord === false) { nodeRef.isWord = true; }
+                }
+                else { 
+                    nodeRef.addChild(new TrieNode(lettersToAdd, nodeRef.points + outerRef.deck[lettersToAdd].points, index === letters.length-lettersToAdd.length));
+                    nodeRef = nodeRef.children[lettersToAdd];
+                }
             }
-            else { 
-                nodeRef.addChild(new TrieNode(letter, nodeRef.points + this.deck[letter].points, index === letters.length-1));
-                nodeRef = nodeRef.children[letter];
+            let index = 0;
+            while(index < letters.length) {
+                let letter = letters[index];
+                if(outerRef.deck[letter].preMulti && index < letters.length-1 && outerRef.deck.hasOwnProperty(`${letter}${letters[index+1]}`)) {
+                    let cachedRef = nodeRef;
+                    addChild(`${letter}${letters[index+1]}`);
+                    let newNodeRef = nodeRef;
+                    nodeRef = cachedRef;
+                    // console.log("Need to make perm");
+                    // console.log(letters);
+                    let slicedWord = [...letters].splice(index+2).join('');
+                    // console.log(slicedWord);
+                    // console.log('sliced word is empty: ', slicedWord === '');
+                    addWordPermutations(outerRef, slicedWord, newNodeRef);
+                }
+                addChild(letter);
+                index++;
             }
-            index++;
         }
+        let firstRef = this.root;
+        addWordPermutations(this, word, firstRef);
     };
     this.hasWord = function(word) {
         let letters = word.split('');
@@ -35,14 +57,15 @@ function Trie() {
         });
         return contains;
     };
-    this.getWords = function() {
+    this.getWords = function(seperator='') {
         let words = [];
         function buildWords(word, node) {
-            if(!!node.letters) { 
-                word = `${word}${node.letters}`;
+            let children = Object.keys(node.children);
+            if(!!node.letters) {
+                word = `${word}${node.letters}${!!children.length ? seperator : ''}`;
                 if(node.isWord) { words.push(word); }
             }
-            Object.keys(node.children).forEach(letter => {
+            children.forEach(letter => {
                 buildWords(word, node.children[letter]);
             });
         }
@@ -50,20 +73,21 @@ function Trie() {
         buildWords('', nodeRef);
         return words;
     };
-    this.printWords = function() {
-        let words = this.getWords();
+    this.printWords = function(seperator='') {
+        let words = this.getWords(seperator);
         console.table(words);
     };
-    this.getWordsWithPoints = function() {
+    this.getWordsWithPoints = function(seperator='') {
         let words = [];
         function buildWords(word, node) {
+            let children = Object.keys(node.children);
             if(!!node.letters) { 
-                word = `${word}${node.letters}`;
+                word = `${word}${node.letters}${!!children.length ? seperator : ''}`;
                 if(node.isWord) { 
                     words.push({word, points: node.points}); 
                 }
             }
-            Object.keys(node.children).forEach(letter => {
+            children.forEach(letter => {
                 buildWords(word, node.children[letter]);
             });
         }
@@ -71,8 +95,8 @@ function Trie() {
         buildWords('', nodeRef);
         return words;
     };
-    this.printWordsWithPoints = function() {
-        let words = this.getWordsWithPoints();
+    this.printWordsWithPoints = function(seperator='') {
+        let words = this.getWordsWithPoints(seperator);
         console.table(words);
     };
     
