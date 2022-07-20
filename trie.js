@@ -7,7 +7,9 @@ function Trie() {
     this.addWord = function(word) {
         let letters = word.split('');
         let nodeRef = this.root;
-        letters.forEach((letter, index) => {
+        let index = 0;
+        while(index < letters.length) {
+            let letter = letters[index];
             if(nodeRef.hasChild(letter)) { 
                 nodeRef = nodeRef.children[letter]; 
                 if(index === letters.length-1 && nodeRef.isWord === false) { nodeRef.isWord = true; }
@@ -16,7 +18,8 @@ function Trie() {
                 nodeRef.addChild(new TrieNode(letter, nodeRef.points + this.deck[letter].points, index === letters.length-1));
                 nodeRef = nodeRef.children[letter];
             }
-        });
+            index++;
+        }
     };
     this.hasWord = function(word) {
         let letters = word.split('');
