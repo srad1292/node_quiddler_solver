@@ -57,6 +57,22 @@ function Trie() {
         });
         return contains;
     };
+    this.getPoints = function(word, seperator='') {
+        let letters = word.split(seperator);
+        let nodeRef = this.root;
+        let contains = true;
+        let points = 0;
+        letters.every((letter, index) => {
+            if(nodeRef.hasChild(letter)) { 
+                nodeRef = nodeRef.children[letter]; 
+                if(index === letters.length-1 && nodeRef.isWord === false) { contains = false; }
+                if(index === letters.length-1 && nodeRef.isWord) { points = nodeRef.points; }
+            }
+            else { contains = false; }
+            return contains;
+        });
+        return points;
+    };
     this.getWords = function(seperator='') {
         let words = [];
         function buildWords(word, node) {
