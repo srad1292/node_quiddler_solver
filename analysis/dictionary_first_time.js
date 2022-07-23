@@ -1,10 +1,9 @@
-const TrieSolver = require('./trie_solver');
+const DictionaryFirstSolver = require("../dictionary_first_solver");
 
 function measure(short, long, runs) {
-    let trieSolver = new TrieSolver();
-    let words = trieSolver.getWords('./dictionary.json');
+    let solver = new DictionaryFirstSolver();
+    let words = solver.getWords('./data/dictionary.json');
     if(!words) { return; }
-    let trie = trieSolver.buildTrie(words);
     let hand = ['d','cl','o','g','a','b','er','in','n','y','s'];
     let result = [];
     
@@ -15,8 +14,8 @@ function measure(short, long, runs) {
         let testHand = hand.slice(0,handSize);
         for(let run = 0; run < runs; run++) {
             let start = performance.now();
-            let found = trieSolver.findWords(trie, testHand);
-            let combos = trieSolver.getCombos(testHand, found);
+            let found = solver.findWords(words, testHand);
+            let combos = solver.getCombos(testHand, found);
             let end = performance.now();
             let time = (end-start)/1000;
             slow = slow === -1 ? time : Math.max(slow, time);
@@ -30,4 +29,4 @@ function measure(short, long, runs) {
     
 }
 
-measure(4,9,30);
+measure(11,11,1);

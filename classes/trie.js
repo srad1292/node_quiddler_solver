@@ -7,11 +7,8 @@ function Trie() {
     this.addWord = function(word) {
         function addWordPermutations(outerRef, remainingWord, nodeRef) {
             if(remainingWord === '') { return; }
-            // console.log("Perm on word: ", remainingWord);
             let letters = remainingWord.split('');
             function addChild(lettersToAdd) {
-                // console.log("Node ref I am adding to: ", nodeRef.letters);
-                // console.log("letters i am adding: ", lettersToAdd);
                 if(nodeRef.hasChild(lettersToAdd)) { 
                     nodeRef = nodeRef.children[lettersToAdd]; 
                     if(index === letters.length-lettersToAdd.length && nodeRef.isWord === false) { nodeRef.isWord = true; }
@@ -29,11 +26,7 @@ function Trie() {
                     addChild(`${letter}${letters[index+1]}`);
                     let newNodeRef = nodeRef;
                     nodeRef = cachedRef;
-                    // console.log("Need to make perm");
-                    // console.log(letters);
                     let slicedWord = [...letters].splice(index+2).join('');
-                    // console.log(slicedWord);
-                    // console.log('sliced word is empty: ', slicedWord === '');
                     addWordPermutations(outerRef, slicedWord, newNodeRef);
                 }
                 addChild(letter);

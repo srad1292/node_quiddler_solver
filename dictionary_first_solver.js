@@ -1,12 +1,10 @@
 const fs = require("fs");
 const prompt = require('prompt-sync')();
-
-const Trie = require('./classes/trie');
 const Word = require('./classes/word');
 const getDeck = require('./classes/deck');
 
 
-function TrieSolver() {
+function DictionaryFirstSolver() {
     this.getWords = function(fileName) {
         try {
             let content = fs.readFileSync(fileName, 'utf8');
@@ -16,14 +14,6 @@ function TrieSolver() {
             console.log("Error reading from: ", fileName);
             return null;
         }
-    }
-    
-    this.buildTrie = function(words){
-        let trie = new Trie();
-        words.forEach(word => {
-            trie.addWord(word);
-        });
-        return trie;
     }
     
     this.askForHand = function(){
@@ -37,31 +27,52 @@ function TrieSolver() {
         
         return hand.split(',');
     }
-    
-    this.findWords = function(trie, hand){
-        let found = [];
-        let card, newCards, word, next, points, duplicateIndex;
-    
-        function accum(letters, cards) {
-            for(let idx = 0; idx < letters.length; idx++) {
-                card = letters[idx];
-                newCards = [...cards, card];
-                word = newCards.join('-');
-                points = trie.getPoints(word, '-');
-                if(points && newCards.length >= 2) {
-                    duplicateIndex = found.findIndex(prev => prev.word.localeCompare(word) === 0);
-                    if(duplicateIndex === -1) {
-                        found.push(new Word(word, points));
+
+    this.findWords = function(words, hand) {
+        let matchingIndex;
+        let found=[];
+        let permutationBuilder;
+        let permutationHand;
+        const deck = getDeck();
+        function checkPermutation(remainingLetters, remainingHand, wordBuilder, points) {
+            let index = 0;
+            while(index < remainingLetters.length) {
+                //If current and next letter matches one of the multi letter cards, split off into checking for that card
+                if(deck[remainingLetters[index]].preMulti && index < remainingLetters.length-1 && deck.hasOwnProperty(`${remainingLetters[index]}${remainingLetters[index+1]}`)) {
+                    matchingIndex = remainingHand.findIndex(card => card.localeCompare(`${remainingLetters[index]}${remainingLetters[index+1]}`) === 0);
+                    if(matchingIndex === -1) { break; }
+                    permutationBuilder = [...wordBuilder];
+                    permutationBuilder.push(remainingHand[matchingIndex]);
+                    if(index === remainingLetters.length-2) {
+                        if(permutationBuilder.length > 1) {
+                            found.push(new Word(permutationBuilder.join('-'), points+deck[remainingHand[matchingIndex]].points));
+                        }
+                    } else {
+                        permutationHand = [...remainingHand];
+                        permutationHand.splice(matchingIndex,1);
+                        checkPermutation(remainingLetters.slice(index+2), permutationHand, [...permutationBuilder], points+deck[remainingHand[matchingIndex]].points);
                     }
                 }
-                next = [...letters];
-                next.splice(idx, 1);
-                accum(next, newCards);
+
+                matchingIndex = remainingHand.findIndex(card => card.localeCompare(remainingLetters[index]) === 0);
+                if(matchingIndex === -1) { break; }
+
+                wordBuilder.push(remainingHand[matchingIndex]);
+                points += deck[remainingHand[matchingIndex]].points;
+
+                if(index === remainingLetters.length-1) {
+                    if(wordBuilder.length > 1){
+                        found.push(new Word(wordBuilder.join('-'), points));
+                    }
+                    break;
+                } 
+                remainingHand.splice(matchingIndex,1);
+                index++;
             }
         }
-    
-        accum(hand, []);
-    
+        for(let word of words) {
+            checkPermutation(word, [...hand], [], 0);
+        }
         return found;
     }
     
@@ -142,4 +153,4 @@ function TrieSolver() {
 }
 
 
-module.exports = TrieSolver;
+module.exports = DictionaryFirstSolver;

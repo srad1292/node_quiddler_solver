@@ -1,5 +1,5 @@
-const Trie = require('../trie');
-const TrieNode = require('../trie_node');
+const Trie = require('../classes/trie');
+const TrieNode = require('../classes/trie_node');
 
 test('constructor creates root - pt 0 - instance of TrieNode', () => {
     const trie = new Trie();

@@ -1,4 +1,4 @@
-const TrieNode = require('../trie_node');
+const TrieNode = require('../classes/trie_node');
 
 test('Letters property set', () => {
     const node = new TrieNode('a', 0);
