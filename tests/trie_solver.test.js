@@ -1,7 +1,5 @@
 const TrieSolver = require('../trie_solver');
-const Trie = require('../trie');
 
-// g,e,t,z,qu
 describe("Build trie", () => {
     test("Adds all the given words to the trie", () => {
         const trieSolver = new TrieSolver();
