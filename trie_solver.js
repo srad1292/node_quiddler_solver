@@ -64,7 +64,7 @@ function TrieSolver() {
         }
     
         accum(hand, []);
-        console.log(runs);
+        // console.log(runs);
         return found;
     }
     
