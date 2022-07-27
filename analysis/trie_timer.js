@@ -14,11 +14,11 @@ function measure(short, long, runs) {
         let total = 0;
         let testHand = hand.slice(0,handSize);
         for(let run = 0; run < runs; run++) {
-            let start = performance.now();
+            let start = Number(process.hrtime.bigint())/1000000000;
             let found = trieSolver.findWords(trie, testHand);
             let combos = trieSolver.getCombos(testHand, found);
-            let end = performance.now();
-            let time = (end-start)/1000;
+            let end = Number(process.hrtime.bigint())/1000000000;
+            let time = (end-start);
             slow = slow === -1 ? time : Math.max(slow, time);
             quick = quick === -1 ? time : Math.min(quick, time);
             total += time;
@@ -30,4 +30,4 @@ function measure(short, long, runs) {
     
 }
 
-measure(4,9,30);
+measure(4,9,15);

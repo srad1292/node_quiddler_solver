@@ -108,11 +108,11 @@ function DictionaryFirstSolver() {
                     pointsLeftInHand = handAfterDiscard.reduce((accum,letter) => accum + deck[letter].points, 0);
                     
                     currentCombo = [...combo, word.word];
-                    let length = combos.push({combo: currentCombo, total: points+word.points-pointsLeftInHand, longest: Math.max(longestWord, lettersInWord.length), discard: discard[0] || ''});
+                    let length = combos.push({combo: currentCombo, total: points+word.points-pointsLeftInHand, longest: Math.max(longestWord, lettersInWord.join('').length), discard: discard[0] || ''});
                     if(length > 1 && isSubset(combos[length-2].combo, combos[length-1].combo)) {
                         combos.splice(length-2, 1);
                     }
-                    addToComboIfPossible(remaningHand, currentCombo, points+word.points, Math.max(longestWord, lettersInWord.length));
+                    addToComboIfPossible(remaningHand, currentCombo, points+word.points, Math.max(longestWord, lettersInWord.join('').length));
                 } 
             }
         }

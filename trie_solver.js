@@ -41,10 +41,11 @@ function TrieSolver() {
     this.findWords = function(trie, hand){
         let found = [];
         let card, newCards, word, next, points, duplicateIndex;
-    
-        function accum(letters, cards) {
-            for(let idx = 0; idx < letters.length; idx++) {
-                card = letters[idx];
+        let runs = 0;
+        function accum(remaningHand, cards) {
+            for(let idx = 0; idx < remaningHand.length; idx++) {
+                runs++;
+                card = remaningHand[idx];
                 newCards = [...cards, card];
                 word = newCards.join('-');
                 points = trie.getPoints(word, '-');
@@ -54,14 +55,16 @@ function TrieSolver() {
                         found.push(new Word(word, points));
                     }
                 }
-                next = [...letters];
+                next = [...remaningHand];
                 next.splice(idx, 1);
-                accum(next, newCards);
+                if(next.length > 1) {
+                    accum(next, newCards);
+                }
             }
         }
     
         accum(hand, []);
-    
+        console.log(runs);
         return found;
     }
     
@@ -97,11 +100,11 @@ function TrieSolver() {
                     pointsLeftInHand = handAfterDiscard.reduce((accum,letter) => accum + deck[letter].points, 0);
                     
                     currentCombo = [...combo, word.word];
-                    let length = combos.push({combo: currentCombo, total: points+word.points-pointsLeftInHand, longest: Math.max(longestWord, lettersInWord.length), discard: discard[0] || ''});
+                    let length = combos.push({combo: currentCombo, total: points+word.points-pointsLeftInHand, longest: Math.max(longestWord, lettersInWord.join('').length), discard: discard[0] || ''});
                     if(length > 1 && isSubset(combos[length-2].combo, combos[length-1].combo)) {
                         combos.splice(length-2, 1);
                     }
-                    addToComboIfPossible(remaningHand, currentCombo, points+word.points, Math.max(longestWord, lettersInWord.length));
+                    addToComboIfPossible(remaningHand, currentCombo, points+word.points, Math.max(longestWord, lettersInWord.join('').length));
                 } 
             }
         }

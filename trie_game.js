@@ -6,12 +6,13 @@ function play() {
     if(!words) { return; }
 
     let trie = trieSolver.buildTrie(words);
-    let hand = ['er','e','n','in','i','n','r'];//trieSolver.askForHand();
+    // let hand = ['er','qu','a','d','i','z','p','s','e','f','g'];
+    let hand = trieSolver.askForHand();
     let found = trieSolver.findWords(trie, hand);
     console.log("All Words");
     console.table(found);
-    // let combos = trieSolver.getCombos(hand, found);
-    // trieSolver.outputPlays(combos);
+    let combos = trieSolver.getCombos(hand, found);
+    trieSolver.outputPlays(combos);
 }
 
 play();

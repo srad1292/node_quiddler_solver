@@ -104,4 +104,14 @@ describe("Get combos", () => {
         const comboToCheck = combos[0];
         expect(comboToCheck.total).toBe(2);
     });
+
+    test("Longest word is based on letters and not cards", () => {
+        const solver = new DictionaryFirstSolver();
+        const hand = ['cl','o','w','n','d','z'];
+        const dictionary = ['clown'];
+        const words = solver.findWords(dictionary,hand);
+        const combos = solver.getCombos(hand,words);
+        const combo = combos[0];
+        expect(combo.longest).toBeGreaterThanOrEqual(5);
+    });
 });
